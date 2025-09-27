@@ -1,6 +1,4 @@
-﻿//"8067802878:AAE8sp0urn8ecnPhVRnvM7cw42bldGEseE0";
-//"@qadambayevvvvvvvvv", "@qadambayevvvvv"
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -19,12 +17,12 @@ class Program
 
         bot.StartReceiving(UpdateHandler, ErrorHandler);
 
-        Console.ReadLine();
+        // 🔹 Render yoki serverda to‘xtab qolmasligi uchun
+        await Task.Delay(-1);
     }
 
     static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        // Foydalanuvchi xabar yuborsa
         if (update.Type == UpdateType.Message && update.Message?.Text != null)
         {
             var chatId = update.Message.Chat.Id;
@@ -49,7 +47,6 @@ class Program
             }
         }
 
-        // Callback tugmalarni bosganda
         if (update.Type == UpdateType.CallbackQuery)
         {
             var callback = update.CallbackQuery!;
@@ -81,15 +78,12 @@ class Program
         }
     }
 
-    // Foydalanuvchidan kanallarga obuna bo‘lishni so‘rash
     static async Task AskToJoinChannels(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
-        // Kanal tugmalari
         var channelButtons = requiredChannels
             .Select(c => new[] { InlineKeyboardButton.WithUrl($"👉 {c}", $"https://t.me/{c.TrimStart('@')}") })
             .ToList();
 
-        // "Obuna bo‘ldim ✅" tugmasi
         channelButtons.Add(new[] { InlineKeyboardButton.WithCallbackData("📌 Obuna bo‘ldim ✅", "check_subs") });
 
         var keyboard = new InlineKeyboardMarkup(channelButtons);
@@ -102,7 +96,6 @@ class Program
         );
     }
 
-    // Foydalanuvchi barcha kanallarga obuna bo‘lganini tekshirish
     static async Task<bool> CheckUserSubscriptions(ITelegramBotClient botClient, long userId, CancellationToken cancellationToken)
     {
         foreach (var channel in requiredChannels)
